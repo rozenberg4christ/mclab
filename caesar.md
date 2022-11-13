@@ -2,7 +2,7 @@
 - The code is self explanatory
 
 # Code
-`
+```java
 import java.util.*;
 public class Caeasar {
     public static StringBuffer encrypt(String text,int s){
@@ -28,4 +28,4 @@ public class Caeasar {
         System.out.print("\nCipher : "+encrypt(text,s));
     }
 }
-`
+```
