@@ -1,3 +1,338 @@
+# Caesar Cipher
+
+```java
+
+import java.util.Scanner;
+
+public class Caesar {
+
+    public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
+    public static String encryptData(String inputStr, int shiftKey) {
+
+        inputStr = inputStr.toLowerCase();
+
+        String encryptStr = "";
+
+        for (int i = 0; i < inputStr.length(); i++) {
+
+            int pos = ALPHABET.indexOf(inputStr.charAt(i));
+
+            int encryptPos = (shiftKey + pos) % 26;
+            char encryptChar = ALPHABET.charAt(encryptPos);
+
+            encryptStr += encryptChar;
+        }
+
+        return encryptStr;
+    }
+
+    public static String decryptData(String inputStr, int shiftKey) {
+
+        inputStr = inputStr.toLowerCase();
+
+        String decryptStr = "";
+
+        for (int i = 0; i < inputStr.length(); i++) {
+
+            int pos = ALPHABET.indexOf(inputStr.charAt(i));
+
+            int decryptPos = (pos - shiftKey) % 26;
+
+            if (decryptPos < 0) {
+                decryptPos = ALPHABET.length() + decryptPos;
+            }
+            char decryptChar = ALPHABET.charAt(decryptPos);
+
+            decryptStr += decryptChar;
+        }
+
+        return decryptStr;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Enter a string for encryption using Caesar Cipher: ");
+        String inputStr = sc.nextLine();
+
+        System.out.println("Enter the value by which each character in the plaintext message gets shifted: ");
+        int shiftKey = Integer.valueOf(sc.nextLine());
+
+        System.out.println("Encrypted Data ===> " + encryptData(inputStr, shiftKey));
+        System.out.println("Decrypted Data ===> " + decryptData(encryptData(inputStr, shiftKey), shiftKey));
+
+        sc.close();
+    }
+}
+
+```
+
+# Affine Cipher
+
+```java
+
+import java.util.Scanner;
+
+public class Affine {
+    public static String encryptionMessage(String Msg) {
+        String CTxt = "";
+        int a = 3;
+        int b = 6;
+        for (int i = 0; i < Msg.length(); i++) {
+            CTxt = CTxt + (char) ((((a * Msg.charAt(i)) + b) % 26) + 65);
+        }
+        return CTxt;
+    }
+
+    public static String decryptionMessage(String CTxt) {
+        String Msg = "";
+        int a = 3;
+        int b = 6;
+        int a_inv = 0;
+        int flag = 0;
+        for (int i = 0; i < 26; i++) {
+            flag = (a * i) % 26;
+            if (flag == 1) {
+                a_inv = i;
+                System.out.println(i);
+            }
+        }
+        for (int i = 0; i < CTxt.length(); i++) {
+            Msg = Msg + (char) (((a_inv * ((CTxt.charAt(i) - b)) % 26)) + 65);
+        }
+        return Msg;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the message: ");
+        String message = sc.next();
+        System.out.println("Message is :" + message);
+        System.out.println("Encrypted Message is : "
+                + encryptionMessage(message));
+        System.out.println("Decrypted Message is: "
+                + decryptionMessage(encryptionMessage(message)));
+        sc.close();
+    }
+}
+
+```
+
+# Hill Cipher
+
+```java
+
+class HillCipher {
+    /* 3x3 key matrix for 3 characters at once */
+    public static int[][] keymat = new int[][] { { 1, 2, 1 }, { 2, 3, 2 },
+            { 2, 2, 1 } }; /* key inverse matrix */
+    public static int[][] invkeymat = new int[][] { { -1, 0, 1 }, { 2, -1, 0 }, { -2, 2, -1
+    } };
+    public static String key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    private static String encode(char a, char b, char c) {
+        String ret = "";
+        int x, y, z;
+        int posa = (int) a - 65;
+        int posb = (int) b - 65;
+        int posc = (int) c - 65;
+        x = posa * keymat[0][0] + posb * keymat[1][0] + posc * keymat[2][0];
+        y = posa * keymat[0][1] + posb * keymat[1][1] + posc * keymat[2][1];
+        z = posa * keymat[0][2] + posb * keymat[1][2] + posc * keymat[2][2];
+        a = key.charAt(x % 26);
+        b = key.charAt(y % 26);
+        c = key.charAt(z % 26);
+        ret = "" + a + b + c;
+        return ret;
+    }
+
+    private static String decode(char a, char b, char c) {
+        String ret = "";
+        int x, y, z;
+        int posa = (int) a - 65;
+        int posb = (int) b - 65;
+        int posc = (int) c - 65;
+        x = posa * invkeymat[0][0] + posb * invkeymat[1][0] + posc *
+                invkeymat[2][0];
+        y = posa * invkeymat[0][1] + posb * invkeymat[1][1] + posc *
+                invkeymat[2][1];
+        z = posa * invkeymat[0][2] + posb * invkeymat[1][2] + posc *
+                invkeymat[2][2];
+        a = key.charAt((x % 26 < 0) ? (26 + x % 26) : (x % 26));
+        b = key.charAt((y % 26 < 0) ? (26 + y % 26) : (y % 26));
+        c = key.charAt((z % 26 < 0) ? (26 + z % 26) : (z % 26));
+        ret = "" + a + b + c;
+        return ret;
+    }
+
+    public static void main(String[] args) throws java.lang.Exception {
+        String msg;
+        String enc = "";
+        String dec = "";
+        int n;
+        msg = ("meowman");
+        System.out.println("simulation of Hill Cipher\n-------------------------");
+        System.out.println("Input message : " + msg);
+        msg = msg.toUpperCase();
+        msg = msg.replaceAll("\\s", "");
+        /* remove spaces */ n = msg.length() % 3;
+        /* append padding text X */ if (n != 0) {
+            for (int i = 1; i <= (3 - n); i++) {
+                msg += 'X';
+            }
+        }
+        System.out.println("padded message : " + msg);
+        char[] pdchars = msg.toCharArray();
+        for (int i = 0; i < msg.length(); i += 3) {
+            enc += encode(pdchars[i], pdchars[i + 1], pdchars[i + 2]);
+        }
+        System.out.println("encoded message : " + enc);
+        char[] dechars = enc.toCharArray();
+        for (int i = 0; i < enc.length(); i += 3) {
+            dec += decode(dechars[i], dechars[i + 1], dechars[i + 2]);
+        }
+        System.out.println("decoded message : " + dec);
+    }
+}
+
+```
+
+
+### Transposition Cipher
+
+```java
+
+public class Transposition {
+    // the most simplest code for transposition cipher
+    public static String encrypt(String plainText, int key) {
+        char[][] railMatrix = new char[key][plainText.length()];
+        for (int i = 0; i < railMatrix.length; i++) {
+            for (int j = 0; j < railMatrix[i].length; j++) {
+                railMatrix[i][j] = '\n';
+            }
+        }
+        boolean down = false;
+        int row = 0, col = 0;
+        for (int i = 0; i < plainText.length(); i++) {
+            if (row == 0 || row == key - 1) {
+                down = !down;
+            }
+            railMatrix[row][col++] = plainText.charAt(i);
+            if (down) {
+                row++;
+            } else {
+                row--;
+            }
+        }
+        String cipherText = "";
+        for (int i = 0; i < key; i++) {
+            for (int j = 0; j < plainText.length(); j++) {
+                if (railMatrix[i][j] != '\n') {
+                    cipherText += railMatrix[i][j];
+                }
+            }
+        }
+        return cipherText;
+    }  
+    
+    public static String decrypt(String cipherText, int key) {
+        char[][] railMatrix = new char[key][cipherText.length()];
+        for (int i = 0; i < railMatrix.length; i++) {
+            for (int j = 0; j < railMatrix[i].length; j++) {
+                railMatrix[i][j] = '\n';
+            }
+        }
+        boolean down = false;
+        int row = 0, col = 0;
+        for (int i = 0; i < cipherText.length(); i++) {
+            if (row == 0 || row == key - 1) {
+                down = !down;
+            }
+            railMatrix[row][col++] = '*';
+            if (down) {
+                row++;
+            } else {
+                row--;
+            }
+        }
+        int index = 0;
+        for (int i = 0; i < key; i++) {
+            for (int j = 0; j < cipherText.length(); j++) {
+                if (railMatrix[i][j] == '*' && index < cipherText.length()) {
+                    railMatrix[i][j] = cipherText.charAt(index++);
+                }
+            }
+        }
+        String plainText = "";
+        row = 0;
+        col = 0;
+        for (int i = 0; i < cipherText.length(); i++) {
+            if (row == 0 || row == key - 1) {
+                down = !down;
+            }
+            if (railMatrix[row][col] != '*') {
+                plainText += railMatrix[row][col++];
+            }
+            if (down) {
+                row++;
+            } else {
+                row--;
+            }
+        }
+        return plainText;
+    }
+
+    public static void main(String[] args) {
+        String plainText = "Hello World";
+        int key = 3;
+        String cipherText = encrypt(plainText, key);
+        System.out.println("Plain Text: " + plainText);
+        System.out.println("Cipher Text: " + cipherText);
+        System.out.println("Plain Text: " + decrypt(cipherText, key));
+    }
+}
+
+```
+
+
+# Bruteforce Attack on Caesar Cipher
+
+```java
+
+void bruteforce() {
+    Scanner sc = new Scanner(System.in);
+    System.out.print("Enter the String : ");
+    String ip = sc.nextLine();
+    input = ip.toCharArray();
+    for(key=1;key<27;key++) {
+        for(int i=0;i<input.length;i++) {
+            if(input[i] == ' ')
+                continue;
+            else {
+                if(input[i] >='A' && input[i] <='Z') {
+                    input[i] = (char) (input[i] - key);
+                    if(input[i] < 'A') {
+                        input[i] = (char) (input[i] + 26);
+                    }
+                }
+                else {
+                    input[i] = (char) (input[i] - key);
+                    if(input[i] < 'a')
+                    {
+                        input[i] = (char) (input[i] + 26);
+                    }
+                }
+            }
+        }
+        System.out.println("Key = " + key + " Decrypted String : " + String.valueOf(input));
+        input = ip.toCharArray();
+    }
+}
+    
+```
+
 # DES
 
 ```java
