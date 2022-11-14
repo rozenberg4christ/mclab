@@ -200,7 +200,7 @@ class HillCipher {
 ```
 
 
-### Transposition Cipher
+# Transposition Cipher
 
 ```java
 
@@ -695,6 +695,43 @@ public class DSA {
         }
 
     }
+}
+
+```
+
+# File Operations
+
+```java
+
+import java.io.*;
+import java.util.*;
+
+void writeToFile(String s) {
+    try {
+        FileWriter myWriter = new FileWriter("filename.txt");
+        myWriter.write(s);
+        myWriter.close();
+        System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+    }
+}
+
+String readFromFile() {
+    String s = "";
+    try {
+        File myObj = new File("filename.txt");
+        Scanner myReader = new Scanner(myObj);
+        while (myReader.hasNextLine()) {
+            s = myReader.nextLine();
+        }
+        myReader.close();
+    } catch (FileNotFoundException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+    }
+    return s;
 }
 
 ```
